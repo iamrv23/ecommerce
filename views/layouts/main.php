@@ -9,6 +9,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use app\models\ShoppingCart;
 
 AppAsset::register($this);
 
@@ -38,43 +39,66 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Products', 'url' => ['/product/index']],
-            [
-                'label' => 'Admin',
-                'url' => '#',
-                'items' => [
-                    ['label' => 'Manage Products', 'url' => ['/product/index']],
-                    ['label' => 'Manage Orders', 'url' => ['/order/index']],
-                    ['label' => 'Manage Users', 'url' => ['/user/index']],
+                    'items' => [
+                    ['label' => 'Home', 'url' => ['/site/index']],
+                    ['label' => 'Products', 'url' => ['/product/index']],
+                    [
+                        'label' => 'Admin',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => 'Manage Products', 'url' => ['/product/index']],
+                            ['label' => 'Manage Orders', 'url' => ['/order/index']],
+                            ['label' => 'Manage Users', 'url' => ['/user/index']],
+                            ['label' => 'RBAC', 'url' => ['/rbac/index']],
+                            ['label' => 'RBAC Manage', 'url' => ['/rbac-manage/index']],
+                        ],
+                        'visible' => !Yii::$app->user->isGuest && Yii::$app->user->can('admin')
+                    ],
                 ],
-                'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'
-            ],
-        ],
     ]);
     
+    $rightItems = [];
+    // cart link: compute count from DB (user_id for logged-in, session_id for guests)
+    $cartCount = 0;
+    try {
+        if (!Yii::$app->user->isGuest) {
+            // sum quantities for logged-in user
+            $sum = ShoppingCart::find()->where(['user_id' => Yii::$app->user->id])->sum('quantity');
+            $cartCount = $sum !== null ? (int)$sum : 0;
+        } else {
+            $sessionId = session_id();
+            if ($sessionId) {
+                $sum = ShoppingCart::find()->where(['session_id' => $sessionId])->sum('quantity');
+                $cartCount = $sum !== null ? (int)$sum : 0;
+            }
+        }
+    } catch (\Throwable $e) {
+        $cartCount = 0;
+    }
+    $rightItems[] = [
+        'label' => '<i class="fas fa-shopping-cart"></i> Cart (' . $cartCount . ')',
+        'url' => ['/cart/index'],
+        'encode' => false,
+    ];
+
+    if (Yii::$app->user->isGuest) {
+        $rightItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
+        $rightItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+    } else {
+        $rightItems[] = ['label' => 'Profile', 'url' => ['/user/view', 'id' => Yii::$app->user->id]];
+        $rightItems[] = '<li class="nav-item">'
+            . Html::beginForm(['/site/logout'])
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'nav-link btn btn-link logout']
+            )
+            . Html::endForm()
+            . '</li>';
+    }
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            [
-                'url' => ['/cart/index'],
-                'visible' => !Yii::$app->user->isGuest,
-                'encode' => false,
-                'label' => '<i class="fas fa-shopping-cart"></i> Cart ' . 
-                    (isset(Yii::$app->session['cart']) ? '(' . count(Yii::$app->session['cart']) . ')' : ''),
-            ],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
+        'items' => $rightItems,
     ]);
     NavBar::end();
     ?>

@@ -23,6 +23,7 @@ $config = [
             'identityClass' => 'app\\models\\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['auth/login'],
+            'on afterLogin' => ['app\\components\\CartEventHandler', 'onAfterLogin'],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SignupForm;
 
 class SiteController extends Controller
 {
@@ -61,7 +62,19 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // show featured and recent products on the homepage
+        $products = [];
+        try {
+            $products = \app\models\Product::find()
+                ->where(['status' => \app\models\Product::STATUS_ACTIVE])
+                ->orderBy(['featured' => SORT_DESC, 'id' => SORT_DESC])
+                ->limit(8)
+                ->all();
+        } catch (\Throwable $e) {
+            Yii::error('Failed to load products for homepage: ' . $e->getMessage(), __METHOD__);
+        }
+
+        return $this->render('index', ['products' => $products]);
     }
 
     /**
@@ -95,6 +108,8 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
+        // no merge flags to clear (cart merging is stateless and handled via DB rows)
+
         return $this->goHome();
     }
 
@@ -124,5 +139,50 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    /**
+     * Signup action.
+     *
+     * @return string|\yii\web\Response
+     */
+    public function actionSignup()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new SignupForm();
+        if (Yii::$app->request->isPost) {
+            Yii::info('Signup POST received: ' . json_encode(Yii::$app->request->post()), __METHOD__);
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            if (($user = $model->signup())) {
+                // merge any session or session-bound guest cart into the new user's cart
+                try {
+                    // Merge any DB rows stored for this guest session into the newly created user
+                    $sessionId = session_id();
+                    if ($sessionId) {
+                        $rows = \app\models\ShoppingCart::find()->where(['session_id' => $sessionId])->all();
+                        foreach ($rows as $r) {
+                            \app\models\ShoppingCart::addOrIncrement($user->id, $r->product_id, $r->quantity);
+                            $r->delete();
+                        }
+                    }
+                    // ensure user cart exists in DB (no session array is required)
+                } catch (\Throwable $e) {
+                    Yii::error('Failed to merge guest cart on signup: ' . $e->getMessage(), __METHOD__);
+                }
+
+                Yii::$app->session->setFlash('success', 'Thank you for signing up. You can now log in.');
+                return $this->redirect(['site/login']);
+            }
+            Yii::info('Signup validation failed: ' . json_encode($model->getErrors()), __METHOD__);
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
     }
 }

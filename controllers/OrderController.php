@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Order;
 use app\models\OrderItem;
+use app\models\Product;
+use app\models\ShoppingCart;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -69,8 +71,9 @@ class OrderController extends Controller
 
     public function actionCreate()
     {
-        $cart = Yii::$app->session->get('cart', []);
-        if (empty($cart)) {
+        $userId = Yii::$app->user->id;
+        $rows = ShoppingCart::find()->where(['user_id' => $userId])->with('product')->all();
+        if (empty($rows)) {
             Yii::$app->session->setFlash('error', 'Your cart is empty.');
             return $this->redirect(['cart/index']);
         }
@@ -84,12 +87,13 @@ class OrderController extends Controller
 
             if ($order->save()) {
                 $totalAmount = 0;
-                foreach ($cart as $productId => $quantity) {
-                    $product = Product::findOne($productId);
+                foreach ($rows as $row) {
+                    $product = $row->product ?: Product::findOne($row->product_id);
+                    $quantity = (int)$row->quantity;
                     if ($product && $product->inventory_quantity >= $quantity) {
                         $orderItem = new OrderItem([
                             'order_id' => $order->id,
-                            'product_id' => $productId,
+                            'product_id' => $row->product_id,
                             'quantity' => $quantity,
                             'unit_price' => $product->price,
                         ]);
@@ -97,7 +101,7 @@ class OrderController extends Controller
                         if ($orderItem->save()) {
                             $totalAmount += $orderItem->getSubtotal();
                             $product->inventory_quantity -= $quantity;
-                            $product->save();
+                            $product->save(false);
                         }
                     }
                 }
@@ -105,7 +109,8 @@ class OrderController extends Controller
                 $order->total_amount = $totalAmount;
                 if ($order->save()) {
                     $transaction->commit();
-                    Yii::$app->session->remove('cart');
+                    // clear user's shopping cart rows
+                    ShoppingCart::deleteAll(['user_id' => $userId]);
                     Yii::$app->session->setFlash('success', 'Order created successfully.');
                     return $this->redirect(['view', 'id' => $order->id]);
                 }

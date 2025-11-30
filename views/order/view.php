@@ -11,10 +11,17 @@ $this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-view">
-    <h1><?= Html::encode($this->title) ?></h1>
+</div>
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h1 class="card-title"><?= Html::encode($this->title) ?></h1>
+                <p>
+                    <?= Html::a('Back to list', ['index'], ['class' => 'btn btn-secondary']) ?>
+                </p>
+            </div>
+
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
@@ -37,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h2>Order Items</h2>
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Product</th>

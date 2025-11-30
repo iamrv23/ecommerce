@@ -12,7 +12,8 @@ class m230719_000001_create_orders_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('orders', [
+        if ($this->db->schema->getTableSchema('orders', true) === null) {
+            $this->createTable('orders', [
             'id' => $this->primaryKey(),
             'user_id' => $this->integer()->notNull(),
             'total_amount' => $this->decimal(10, 2)->notNull(),
@@ -23,14 +24,17 @@ class m230719_000001_create_orders_table extends Migration
             'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
-        $this->addForeignKey(
-            'fk-orders-user_id',
-            'orders',
-            'user_id',
-            'users',
-            'id',
-            'CASCADE'
-        );
+            $this->addForeignKey(
+                'fk-orders-user_id',
+                'orders',
+                'user_id',
+                'users',
+                'id',
+                'CASCADE'
+            );
+        } else {
+            echo "Table 'orders' already exists, skipping creation.\n";
+        }
     }
 
     /**

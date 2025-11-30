@@ -6,6 +6,7 @@ return [
     'senderName' => 'E-Commerce Platform',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
+    'adminSignupCode' => 'ADMINX',
 
     // E-commerce settings
     'ecommerce' => [

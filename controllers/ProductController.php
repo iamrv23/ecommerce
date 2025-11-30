@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Product;
+use app\models\ProductImage;
+use yii\web\UploadedFile;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -73,6 +75,23 @@ class ProductController extends Controller
         $model = new Product();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // handle uploaded images
+            $files = UploadedFile::getInstancesByName('imageFiles');
+            if (!empty($files)) {
+                foreach ($files as $file) {
+                    ProductImage::saveUploadedFile($file, $model->id);
+                }
+                // if no primary image set, set first uploaded as primary
+                $primary = ProductImage::find()->where(['product_id' => $model->id, 'is_primary' => 1])->one();
+                if (!$primary) {
+                    $first = ProductImage::find()->where(['product_id' => $model->id])->orderBy(['id'=>SORT_ASC])->one();
+                    if ($first) {
+                        $first->is_primary = 1;
+                        $first->save(false);
+                    }
+                }
+            }
+
             Yii::$app->session->setFlash('success', 'Product created successfully.');
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -87,6 +106,13 @@ class ProductController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $files = UploadedFile::getInstancesByName('imageFiles');
+            if (!empty($files)) {
+                foreach ($files as $file) {
+                    ProductImage::saveUploadedFile($file, $model->id);
+                }
+            }
+
             Yii::$app->session->setFlash('success', 'Product updated successfully.');
             return $this->redirect(['view', 'id' => $model->id]);
         }

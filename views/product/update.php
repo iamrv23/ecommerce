@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <div class="row">
         <div class="col-md-8">
-            <?php $form = ActiveForm::begin(); ?>
+            <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
             <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
@@ -37,6 +37,8 @@ $this->params['breadcrumbs'][] = 'Update';
             <?= $form->field($model, 'featured')->checkbox() ?>
             <?= $form->field($model, 'meta_title')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'meta_description')->textarea(['rows' => 3]) ?>
+            <?= Html::label('Product images') ?>
+            <?= Html::fileInput('imageFiles[]', null, ['multiple' => true, 'accept' => 'image/*']) ?>
 
             <div class="form-group">
                 <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -12,7 +12,8 @@ class m230719_000002_create_order_items_table extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('order_items', [
+        if ($this->db->schema->getTableSchema('order_items', true) === null) {
+            $this->createTable('order_items', [
             'id' => $this->primaryKey(),
             'order_id' => $this->integer()->notNull(),
             'product_id' => $this->integer()->notNull(),
@@ -22,23 +23,26 @@ class m230719_000002_create_order_items_table extends Migration
             'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
-        $this->addForeignKey(
-            'fk-order_items-order_id',
-            'order_items',
-            'order_id',
-            'orders',
-            'id',
-            'CASCADE'
-        );
+            $this->addForeignKey(
+                'fk-order_items-order_id',
+                'order_items',
+                'order_id',
+                'orders',
+                'id',
+                'CASCADE'
+            );
 
-        $this->addForeignKey(
-            'fk-order_items-product_id',
-            'order_items',
-            'product_id',
-            'products',
-            'id',
-            'CASCADE'
-        );
+            $this->addForeignKey(
+                'fk-order_items-product_id',
+                'order_items',
+                'product_id',
+                'products',
+                'id',
+                'CASCADE'
+            );
+        } else {
+            echo "Table 'order_items' already exists, skipping creation.\n";
+        }
     }
 
     /**

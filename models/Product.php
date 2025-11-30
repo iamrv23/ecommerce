@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -48,7 +49,10 @@ class Product extends ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::class,
+            [
+                'class' => TimestampBehavior::class,
+                'value' => new Expression('CURRENT_TIMESTAMP'),
+            ],
         ];
     }
 
@@ -139,11 +143,11 @@ class Product extends ActiveRecord
     }
 
     /**
-     * Get product attributes
+     * Get product attributes (renamed to avoid conflict with Model::getAttributes())
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getAttributes()
+    public function getProductAttributes()
     {
         return $this->hasMany(ProductAttribute::class, ['product_id' => 'id'])
             ->orderBy(['sort_order' => SORT_ASC]);
@@ -222,7 +226,28 @@ class Product extends ActiveRecord
     public function getPrimaryImageUrl()
     {
         $image = $this->primaryImage;
-        return $image ? $image->image_url : '/images/no-image.png';
+        if (!$image || empty($image->image_url)) {
+            return 'https://picsum.photos/seed/product' . $this->id . '/1200/800';
+        }
+
+        $url = $image->image_url;
+        // If absolute URL, return as-is
+        if (stripos($url, 'http://') === 0 || stripos($url, 'https://') === 0) {
+            return $url;
+        }
+
+        // Normalize leading slash
+        if ($url[0] !== '/') {
+            $url = '/' . $url;
+        }
+
+        $webrootPath = Yii::getAlias('@webroot') . $url;
+        if (file_exists($webrootPath)) {
+            return $url;
+        }
+
+        // fallback to picsum placeholder for missing local files
+        return 'https://picsum.photos/seed/product' . $this->id . '/1200/800';
     }
 
     /**

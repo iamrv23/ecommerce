@@ -1,0 +1,533 @@
+#!/usr/bin/env python3
+"""
+Simple Chatbot using ChatterBot for e-commerce automation
+"""
+
+import json
+import sys
+import os
+import logging
+
+# Suppress chatterbot training logs
+logging.getLogger('chatterbot').setLevel(logging.ERROR)
+
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer, ListTrainer
+
+class EcommerceChatbot:
+    def __init__(self):
+        self.chatbot = ChatBot(
+            'EcommerceBot',
+            storage_adapter='chatterbot.storage.SQLStorageAdapter',
+            database_uri='sqlite:///chatbot.db',
+            logic_adapters=[
+                {
+                    'import_path': 'chatterbot.logic.BestMatch',
+                    'default_response': 'I am sorry, but I do not understand.',
+                    'maximum_similarity_threshold': 0.90
+                }
+            ]
+        )
+
+        # Train with e-commerce specific conversations
+        self._train_ecommerce_data()
+
+    def _train_ecommerce_data(self):
+        trainer = ListTrainer(self.chatbot)
+
+        # Customer creation intents - Expanded training data
+        trainer.train([
+            "I want to create a new customer account",
+            "create_customer",
+            "I need to add a new customer",
+            "create_customer",
+            "register a new customer",
+            "create_customer",
+            "add a customer to the system",
+            "create_customer",
+            "sign up a new customer",
+            "create_customer",
+            "create customer profile",
+            "create_customer",
+            "add customer record",
+            "create_customer",
+            "register customer account",
+            "create_customer",
+            "new customer registration",
+            "create_customer",
+            "customer account creation",
+            "create_customer",
+            "add new client",
+            "create_customer",
+            "create a customer",
+            "create_customer",
+            "customer setup",
+            "create_customer",
+            "customer onboarding",
+            "create_customer",
+            "add customer details",
+            "create_customer",
+            "customer information entry",
+            "create_customer",
+            "register new user",
+            "create_customer",
+            "create customer login",
+            "create_customer",
+            "add customer to database",
+            "create_customer",
+            "customer profile creation",
+            "create_customer",
+            "new customer addition",
+            "create_customer",
+            "customer account setup",
+            "create_customer",
+            "register customer profile",
+            "create_customer"
+        ])
+
+        # Order processing intents - Expanded training data
+        trainer.train([
+            "I want to place an order",
+            "process_order",
+            "create a new order",
+            "process_order",
+            "I need to process an order",
+            "process_order",
+            "place an order",
+            "process_order",
+            "submit an order",
+            "process_order",
+            "create order",
+            "process_order",
+            "process order request",
+            "process_order",
+            "handle order",
+            "process_order",
+            "order processing",
+            "process_order",
+            "new order creation",
+            "process_order",
+            "order submission",
+            "process_order",
+            "place order",
+            "process_order",
+            "order fulfillment",
+            "process_order",
+            "process customer order",
+            "process_order",
+            "create purchase order",
+            "process_order",
+            "order management",
+            "process_order",
+            "handle purchase",
+            "process_order",
+            "order transaction",
+            "process_order",
+            "process sale",
+            "process_order",
+            "create sales order",
+            "process_order",
+            "order execution",
+            "process_order",
+            "process order now",
+            "process_order",
+            "handle order placement",
+            "process_order",
+            "order processing system",
+            "process_order",
+            "create new order",
+            "process_order"
+        ])
+
+        # Inventory check intents - Expanded training data
+        trainer.train([
+            "check inventory",
+            "check_inventory",
+            "what's in stock",
+            "check_inventory",
+            "inventory status",
+            "check_inventory",
+            "check stock levels",
+            "check_inventory",
+            "inventory check",
+            "check_inventory",
+            "what do we have in stock",
+            "check_inventory",
+            "stock availability",
+            "check_inventory",
+            "inventory levels",
+            "check_inventory",
+            "check product stock",
+            "check_inventory",
+            "stock status",
+            "check_inventory",
+            "inventory availability",
+            "check_inventory",
+            "what's available",
+            "check_inventory",
+            "check stock",
+            "check_inventory",
+            "inventory report",
+            "check_inventory",
+            "stock check",
+            "check_inventory",
+            "product inventory",
+            "check_inventory",
+            "check warehouse stock",
+            "check_inventory",
+            "inventory lookup",
+            "check_inventory",
+            "stock information",
+            "check_inventory",
+            "inventory details",
+            "check_inventory",
+            "check item stock",
+            "check_inventory",
+            "stock quantity",
+            "check_inventory",
+            "inventory count",
+            "check_inventory",
+            "what's in inventory",
+            "check_inventory",
+            "check stock availability",
+            "check_inventory",
+            "inventory status check",
+            "check_inventory"
+        ])
+
+        # License assignment intents - Expanded training data
+        trainer.train([
+            "assign license",
+            "assign_license",
+            "I need to assign a license",
+            "assign_license",
+            "license assignment",
+            "assign_license",
+            "assign software license",
+            "assign_license",
+            "license allocation",
+            "assign_license",
+            "give license",
+            "assign_license",
+            "license distribution",
+            "assign_license",
+            "assign product license",
+            "assign_license",
+            "license management",
+            "assign_license",
+            "allocate license",
+            "assign_license",
+            "license assignment process",
+            "assign_license",
+            "assign license key",
+            "assign_license",
+            "license activation",
+            "assign_license",
+            "provide license",
+            "assign_license",
+            "license granting",
+            "assign_license",
+            "assign user license",
+            "assign_license",
+            "license provisioning",
+            "assign_license",
+            "give access license",
+            "assign_license",
+            "license setup",
+            "assign_license",
+            "assign customer license",
+            "assign_license",
+            "license deployment",
+            "assign_license",
+            "provide software license",
+            "assign_license",
+            "license key assignment",
+            "assign_license",
+            "assign license access",
+            "assign_license",
+            "license permission",
+            "assign_license",
+            "grant license",
+            "assign_license"
+        ])
+
+        # Report generation intents - Expanded training data
+        trainer.train([
+            "show me reports",
+            "generate_report",
+            "I need a report",
+            "generate_report",
+            "sales report",
+            "generate_report",
+            "generate report",
+            "generate_report",
+            "create report",
+            "generate_report",
+            "report generation",
+            "generate_report",
+            "analytics report",
+            "generate_report",
+            "business report",
+            "generate_report",
+            "performance report",
+            "generate_report",
+            "sales analytics",
+            "generate_report",
+            "report dashboard",
+            "generate_report",
+            "data report",
+            "generate_report",
+            "financial report",
+            "generate_report",
+            "monthly report",
+            "generate_report",
+            "weekly report",
+            "generate_report",
+            "daily report",
+            "generate_report",
+            "sales summary",
+            "generate_report",
+            "revenue report",
+            "generate_report",
+            "customer report",
+            "generate_report",
+            "order report",
+            "generate_report",
+            "inventory report",
+            "generate_report",
+            "product report",
+            "generate_report",
+            "transaction report",
+            "generate_report",
+            "generate sales report",
+            "generate_report",
+            "create analytics report",
+            "generate_report",
+            "report creation",
+            "generate_report",
+            "business analytics",
+            "generate_report"
+        ])
+
+        # Workflow automation intents - Expanded training data
+        trainer.train([
+            "automate workflow",
+            "automate_workflow",
+            "I need to automate a process",
+            "automate_workflow",
+            "workflow automation",
+            "automate_workflow",
+            "process automation",
+            "automate_workflow",
+            "automate business process",
+            "automate_workflow",
+            "workflow optimization",
+            "automate_workflow",
+            "automate tasks",
+            "automate_workflow",
+            "business process automation",
+            "automate_workflow",
+            "workflow streamlining",
+            "automate_workflow",
+            "automate operations",
+            "automate_workflow",
+            "process improvement",
+            "automate_workflow",
+            "workflow efficiency",
+            "automate_workflow",
+            "automate procedures",
+            "automate_workflow",
+            "task automation",
+            "automate_workflow",
+            "automate routine tasks",
+            "automate_workflow",
+            "workflow management",
+            "automate_workflow",
+            "process automation system",
+            "automate_workflow",
+            "automate workflows",
+            "automate_workflow",
+            "business automation",
+            "automate_workflow",
+            "workflow automation tools",
+            "automate_workflow",
+            "automate processes",
+            "automate_workflow",
+            "operational automation",
+            "automate_workflow",
+            "workflow enhancement",
+            "automate_workflow",
+            "process streamlining",
+            "automate_workflow",
+            "automate daily tasks",
+            "automate_workflow",
+        # Additional training for common conversational patterns
+        trainer.train([
+            "hello",
+            "Hi there! How can I help you with your e-commerce tasks today?",
+            "hi",
+            "Hello! I'm here to assist with customer management, orders, inventory, and more.",
+            "help",
+            "I can help you with: creating customers, processing orders, checking inventory, assigning licenses, generating reports, and automating workflows. What would you like to do?",
+            "what can you do",
+            "I can assist with various e-commerce tasks including customer management, order processing, inventory checks, license assignments, report generation, and workflow automation.",
+            "goodbye",
+            "Goodbye! Feel free to come back anytime you need help with your e-commerce operations.",
+            "bye",
+            "Have a great day! Let me know if you need assistance with any e-commerce tasks.",
+            "thank you",
+            "You're welcome! Is there anything else I can help you with?",
+            "thanks",
+            "My pleasure! Don't hesitate to ask if you need help with customers, orders, or any other tasks."
+        ])
+
+        # Training for clarification requests
+        trainer.train([
+            "I don't understand",
+            "I apologize for not being clear. Could you please rephrase your request or tell me specifically what you'd like help with?",
+            "what do you mean",
+            "Let me clarify. I can help with customer creation, order processing, inventory checks, license assignments, report generation, and workflow automation. Which of these would you like to work on?",
+            "can you repeat that",
+            "Of course! I can assist with creating new customers, processing orders, checking inventory levels, assigning licenses, generating reports, and automating business workflows.",
+            "explain",
+            "I'd be happy to explain. I specialize in e-commerce automation tasks. Just tell me what you need help with and I'll guide you through it."
+        ])
+
+        # Training for error handling
+        trainer.train([
+            "that didn't work",
+            "I'm sorry that didn't work as expected. Let me try a different approach. What specifically were you trying to accomplish?",
+            "error",
+            "I apologize for the error. Could you please provide more details about what you were trying to do so I can assist you better?",
+            "something went wrong",
+            "I understand something didn't go as planned. Let's try again. What task were you working on?",
+            "failed",
+            "I'm sorry to hear that failed. Let me help you troubleshoot this. What were you trying to do?"
+        ])
+
+    def get_response(self, message):
+
+        # Enhanced intent mapping with comprehensive keywords
+        intent_mapping = {
+            "create_customer": [
+                "create", "customer", "account", "register", "new", "add", "client",
+                "user", "profile", "signup", "registration", "onboard", "setup",
+                "record", "entry", "login", "database", "information", "details"
+            ],
+            "process_order": [
+                "order", "place", "process", "purchase", "submit", "create", "handle",
+                "fulfill", "transaction", "sale", "sales", "execute", "manage",
+ "request", "placement", "system", "now", "new"
+            ],
+            "check_inventory": [
+                "inventory", "stock", "check", "available", "status", "levels",
+                "what's", "have", "product", "warehouse", "lookup", "information",
+                "details", "item", "quantity", "count", "availability", "report"
+            ],
+            "assign_license": [
+                "license", "assign", "key", "activation", "allocation", "give",
+                "distribution", "software", "product", "management", "allocate",
+                "provisioning", "access", "permission", "grant", "deployment",
+                "setup", "provide"
+            ],
+            "generate_report": [
+                "report", "generate", "show", "analytics", "data", "sales", "business",
+                "performance", "summary", "revenue", "customer", "monthly", "weekly",
+                "daily", "financial", "transaction", "product", "dashboard", "creation"
+            ],
+            "automate_workflow": [
+                "automate", "workflow", "process", "task", "business", "optimization",
+                "streamline", "efficiency", "operations", "improvement", "procedure",
+                "routine", "management", "system", "tools", "enhancement", "daily"
+            ]
+        }
+
+        detected_intent = None
+        max_confidence = 0.0
+
+        message_lower = message.lower()
+        message_words = set(message_lower.split())
+
+        for intent, keywords in intent_mapping.items():
+            # Count matching keywords
+            matches = sum(1 for keyword in keywords if keyword in message_lower)
+            keyword_set = set(keywords)
+            word_matches = len(message_words.intersection(keyword_set))
+
+            # Calculate confidence based on multiple factors
+            total_matches = matches + word_matches
+            keyword_coverage = total_matches / len(keywords) if keywords else 0
+            word_coverage = word_matches / len(message_words) if message_words else 0
+
+            # Weighted confidence score
+            confidence = (keyword_coverage * 0.6) + (word_coverage * 0.4)
+
+            # Boost confidence for exact matches and multiple keywords
+            if matches >= 2:
+                confidence += 0.1
+            if word_matches >= 2:
+                confidence += 0.1
+
+            # Cap at 0.95 for keyword-based detection
+            confidence = min(confidence, 0.95)
+
+            if confidence > max_confidence and confidence >= 0.3:  # Minimum threshold
+                max_confidence = confidence
+                detected_intent = intent
+
+        # If no intent detected with sufficient confidence, try fallback patterns
+        if not detected_intent:
+            # Check for question patterns that might indicate specific intents
+            if any(word in message_lower for word in ["how many", "how much", "what's left", "available stock"]):
+                detected_intent = "check_inventory"
+                max_confidence = 0.7
+            elif any(word in message_lower for word in ["buy", "purchase", "order", "get"]):
+                detected_intent = "process_order"
+                max_confidence = 0.7
+            elif any(word in message_lower for word in ["report", "analytics", "data", "statistics"]):
+                detected_intent = "generate_report"
+                max_confidence = 0.7
+
+        return {
+            'intent': detected_intent,
+            'confidence': round(max_confidence, 2),
+            'response': str(response),
+            'text': message
+        }
+
+def main():
+    if len(sys.argv) < 2:
+        print(json.dumps({'error': 'No message provided'}))
+        sys.exit(1)
+
+    message = sys.argv[1]
+    sender = sys.argv[2] if len(sys.argv) > 2 else None
+
+    try:
+        # Suppress all output except our final JSON
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        sys.stdout = open(os.devnull, 'w')
+        sys.stderr = open(os.devnull, 'w')
+        
+        chatbot = EcommerceChatbot()
+        result = chatbot.get_response(message)
+        
+        # Restore stdout and print result
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+        print(json.dumps(result))
+    except Exception as e:
+        # Restore stdout/stderr and print error
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+        print(json.dumps({
+            'error': str(e),
+            'intent': None,
+            'confidence': 0.0,
+            'response': 'Sorry, I encountered an error processing your request.',
+            'text': message
+        }))
+
+if __name__ == '__main__':
+    main()

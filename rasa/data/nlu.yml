@@ -1,0 +1,70 @@
+version: "3.1"
+
+nlu:
+- intent: create_customer
+  examples: |
+    - I want to create a new customer account
+    - Can you help me register a new user?
+    - Add a customer with name [John Doe](first_name) [Smith](last_name)
+    - Create customer account for [jane@example.com](email)
+    - Register a new customer
+    - Sign up a user
+
+- intent: process_order
+  examples: |
+    - I want to place an order
+    - Can you process my order?
+    - Buy [laptop](product_name) for me
+    - Order [5](quantity) [phones](product_name)
+    - Purchase [tablet](product_name)
+    - I want to buy something
+
+- intent: check_inventory
+  examples: |
+    - Do you have [laptop](product_name) in stock?
+    - Check inventory for [SKU123](sku)
+    - How many [phones](product_name) do you have?
+    - Is [tablet](product_name) available?
+    - Check stock for [computer](product_name)
+    - Do you have [SKU456](sku) available?
+
+- intent: get_order_status
+  examples: |
+    - What's the status of order [12345](order_id)?
+    - Check my order status
+    - Where is my order [ORD-12345](order_id)?
+    - Status of order [67890](order_id)
+    - How is my order doing?
+
+- intent: assign_license
+  examples: |
+    - Assign a license to [user123](user_id)
+    - Give me a license key
+    - I need a software license
+    - Create license for user
+    - Generate license key
+
+- intent: generate_report
+  examples: |
+    - Generate sales report
+    - Show me the monthly report
+    - Create inventory report
+    - I need a report
+    - Generate report
+
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - good morning
+    - good evening
+    - hey there
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you later
+    - have a good day
+    - farewell

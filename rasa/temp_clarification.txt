@@ -1,0 +1,11 @@
+        # Training for clarification requests
+        trainer.train([
+            "I don't understand",
+            "I apologize for not being clear. Could you please rephrase your request or tell me specifically what you'd like help with?",
+            "what do you mean",
+            "Let me clarify. I can help with customer creation, order processing, inventory checks, license assignments, report generation, and workflow automation. Which of these would you like to work on?",
+            "can you repeat that",
+            "Of course! I can assist with creating new customers, processing orders, checking inventory levels, assigning licenses, generating reports, and automating business workflows.",
+            "explain",
+            "I'd be happy to explain. I specialize in e-commerce automation tasks. Just tell me what you need help with and I'll guide you through it."
+        ])

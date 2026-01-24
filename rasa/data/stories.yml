@@ -1,0 +1,39 @@
+version: "3.1"
+
+stories:
+- story: greet and goodbye
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: create customer
+  steps:
+  - intent: create_customer
+  - action: utter_customer_created
+
+- story: process order
+  steps:
+  - intent: process_order
+  - action: utter_order_processed
+
+- story: check inventory
+  steps:
+  - intent: check_inventory
+  - action: utter_inventory_status
+
+- story: get order status
+  steps:
+  - intent: get_order_status
+  - action: utter_order_status
+
+- story: assign license
+  steps:
+  - intent: assign_license
+  - action: utter_license_assigned
+
+- story: generate report
+  steps:
+  - intent: generate_report
+  - action: utter_report_generated

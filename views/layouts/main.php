@@ -124,6 +124,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 </footer>
 
 <?php $this->endBody() ?>
+
+<!-- Chatbot Widget -->
+<?php if (!Yii::$app->user->isGuest): ?>
+    <?= $this->render('@app/modules/chatbot/views/widget/chat') ?>
+<?php endif ?>
+
 </body>
 </html>
 <?php $this->endPage() ?>

@@ -8,6 +8,11 @@ $config = [
     'name' => 'E-Commerce Platform',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'modules' => [
+        'chatbot' => [
+            'class' => 'app\modules\chatbot\Module',
+        ],
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
@@ -71,6 +76,10 @@ $config = [
                 // API routes
                 'api/<controller:\\w+>/<action:\\w+>' => 'api/<controller>/<action>',
                 'api/chatbot/<action:\\w+>' => 'api/chatbot/<action>',
+
+                // Chatbot routes
+                'chatbot' => 'chatbot/widget/chat',
+                'chatbot/<controller:\\w+>/<action:\\w+>' => 'chatbot/<controller>/<action>',
 
                 // Default
                 '' => 'site/index',

@@ -1,0 +1,53 @@
+version: "3.1"
+
+intents:
+  - create_customer
+  - process_order
+  - check_inventory
+  - get_order_status
+  - assign_license
+  - generate_report
+  - greet
+  - goodbye
+
+entities:
+  - first_name
+  - last_name
+  - email
+  - product_name
+  - sku
+  - quantity
+  - order_id
+  - user_id
+
+responses:
+  utter_greet:
+    - text: "Hello! How can I help you today?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day!"
+
+  utter_customer_created:
+    - text: "Customer account has been created successfully!"
+
+  utter_order_processed:
+    - text: "Your order has been processed successfully!"
+
+  utter_inventory_status:
+    - text: "I've checked the inventory for you."
+
+  utter_order_status:
+    - text: "Here's the status of your order."
+
+  utter_license_assigned:
+    - text: "License has been assigned successfully!"
+
+  utter_report_generated:
+    - text: "Report has been generated successfully!"
+
+  utter_default:
+    - text: "I'm sorry, I didn't understand that. Can you please rephrase?"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

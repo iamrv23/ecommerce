@@ -101,6 +101,25 @@ INSTALLATION
 If you do not have [Composer](https://getcomposer.org/), you may install it by following the instructions
 at [getcomposer.org](https://getcomposer.org/doc/00-intro.md#installation-nix).
 
+### ⚠️ IMPORTANT: Security Configuration
+
+Before running this application, **you must** configure security settings:
+
+1. **Copy the environment example file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit `.env`** and change all default values, especially:
+   - Database credentials (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`)
+   - Cookie validation key (`COOKIE_VALIDATION_KEY`) - generate a new one
+   - Admin signup code (`ADMIN_SIGNUP_CODE`)
+   - Email addresses (`ADMIN_EMAIL`, `SENDER_EMAIL`)
+
+3. **See [SECURITY.md](SECURITY.md)** for detailed security setup instructions and best practices.
+
+### Install from Composer
+
 You can then install this project template using the following command:
 
 ~~~

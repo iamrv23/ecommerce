@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'senderEmail' => 'noreply@example.com',
+    'adminEmail' => getenv('ADMIN_EMAIL') ?: 'admin@example.com',
+    'senderEmail' => getenv('SENDER_EMAIL') ?: 'noreply@example.com',
     'senderName' => 'E-Commerce Platform',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
-    'adminSignupCode' => 'ADMINX',
+    'adminSignupCode' => getenv('ADMIN_SIGNUP_CODE') ?: 'ADMIN_CODE_CHANGE_ME',
 
     // E-commerce settings
     'ecommerce' => [

@@ -19,7 +19,7 @@ $config = [
     ],
     'components' => [
         'request' => [
-            'cookieValidationKey' => 'your-secret-key-here',
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'your-secret-key-here',
         ],
         'cache' => [
             'class' => 'yii\\caching\\FileCache',

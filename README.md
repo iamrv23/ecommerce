@@ -282,3 +282,29 @@ Formatted Response to User
 
 CONFIGURATION
 -------------
+
+See [SECURITY.md](SECURITY.md) for comprehensive security and configuration guidelines.
+
+
+CONTRIBUTING
+------------
+
+We welcome contributions! Please review our [contribution guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+Key points:
+- Follow existing code style (PSR-12 / Yii2 conventions)
+- Add tests for new features
+- Keep commits atomic and well-documented
+- Review security guidelines before committing code
+
+
+DOCUMENTATION
+--------------
+
+- [README.md](README.md) - This file
+- [SECURITY.md](SECURITY.md) - Security setup and deployment guidelines
+- [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md) - Security audit findings
+- [CHATBOT_README.md](CHATBOT_README.md) - AI chatbot module documentation
+- [rasa/README.md](rasa/README.md) - Python NLP setup guide
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contributor guidelines
+

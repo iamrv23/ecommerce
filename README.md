@@ -161,13 +161,37 @@ You can then access the application through the following URL:
 
 After installation, set up the Python environment for chatbot functionality:
 
+#### Option 1: Using requirements.txt (Recommended)
+
 ```bash
 # Create and activate Python virtual environment
 cd rasa
 python3.9 -m venv rasa_env
 source rasa_env/bin/activate  # On Windows: rasa_env\Scripts\activate
 
-# Install required Python packages
+# Install all dependencies from requirements.txt
+pip install -r requirements.txt
+
+# Return to project root
+cd ..
+```
+
+The `requirements.txt` file contains all necessary packages including:
+- chatterbot==1.2.10 - Conversational AI engine
+- spacy==3.8.0 - Natural language processing
+- numpy, scipy - Scientific computing
+- pydantic, pyyaml - Configuration management
+- And 130+ additional dependencies
+
+#### Option 2: Manual Installation
+
+```bash
+# Create and activate Python virtual environment
+cd rasa
+python3.9 -m venv rasa_env
+source rasa_env/bin/activate  # On Windows: rasa_env\Scripts\activate
+
+# Install required Python packages manually
 pip install chatterbot chatterbot_corpus spacy
 python -m spacy download en_core_web_sm
 

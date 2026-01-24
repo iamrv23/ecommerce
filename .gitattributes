@@ -1,0 +1,11 @@
+# Binary files
+*.db binary
+*.so binary
+*.dylib binary
+
+# Python compiled files
+*.pyc binary
+*.pyo binary
+
+# Large files
+rasa/rasa_env/ export-ignore

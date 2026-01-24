@@ -34,4 +34,12 @@ tests/_support/_generated
 
 #instructor notes
 copilot-instructor-notes.md
-custom-instructions.mdrasa/rasa_env/
+custom-instructions.md
+
+# Python virtual environments
+.venv/
+venv/
+rasa/rasa_env/
+env/
+__pycache__/
+*.pyc
